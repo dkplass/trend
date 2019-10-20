@@ -46,7 +46,7 @@ export default {
   methods: {
     getProducts() {
       const vm = this;
-      const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products/all`;
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/products/all`;
       this.$http.get(url).then(response => {
         vm.products = response.data.products;
       });

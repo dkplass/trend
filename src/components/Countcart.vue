@@ -13,7 +13,7 @@ export default {
   methods: {
     updateQty() {
       const vm = this;
-      const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`;
       this.$http.get(url).then(response => {
         vm.cartQty = response.data.data.carts.length;
       });
