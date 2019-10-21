@@ -50,30 +50,30 @@
 
 <script>
 export default {
-  name: "Cartlist",
-  props: ["cartdata"],
-  data() {
+  name: 'Cartlist',
+  props: ['cartdata'],
+  data () {
     return {
-      coupon_code: ""
-    };
+      coupon_code: ''
+    }
   },
   methods: {
-    removeCartItem(id) {
-      console.log(id);
-      this.$emit("emitCartItemId", id);
+    removeCartItem (id) {
+      console.log(id)
+      this.$emit('emitCartItemId', id)
     },
-    addCouponCode() {
-      this.$emit("couponCode", this.coupon_code);
+    addCouponCode () {
+      this.$emit('couponCode', this.coupon_code)
     }
   },
   computed: {
-    cartlist() {
-      console.log(this.cartdata);
-      const vm = this;
-      return vm.cartdata.carts;
+    cartlist () {
+      console.log(this.cartdata)
+      const vm = this
+      return vm.cartdata.carts
     }
   }
-};
+}
 </script>
 
 <style scoped>

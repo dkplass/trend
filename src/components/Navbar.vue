@@ -19,18 +19,18 @@
 
 <script>
 export default {
-  name: "Navbar",
+  name: 'Navbar',
   methods: {
-    signout() {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/logout`;
+    signout () {
+      const vm = this
+      const url = `${process.env.VUE_APP_APIPATH}/logout`
       this.$http.post(url).then(response => {
-        console.log(response.data);
+        console.log(response.data)
         if (response.data.success) {
-          vm.$router.push("/login");
+          vm.$router.push('/login')
         }
-      });
+      })
     }
   }
-};
+}
 </script>

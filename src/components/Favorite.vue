@@ -33,76 +33,76 @@
 
 <script>
 export default {
-  name: "favorite",
-  data() {
+  name: 'favorite',
+  data () {
     return {
       favoriteQty: 0,
       favoriteLocalStorage:
-        JSON.parse(window.localStorage.getItem("favoriteStoredId")) || [],
+        JSON.parse(window.localStorage.getItem('favoriteStoredId')) || [],
       favorite: [],
       products: []
-    };
-  },
-  methods: {
-    getProducts() {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/products/all`;
-      this.$http.get(url).then(response => {
-        vm.products = response.data.products;
-      });
-    },
-    getFavorite() {
-      const vm = this;
-      vm.getProducts();
-      vm.favorite = [];
-      vm.fetch();
-      vm.products.forEach(function(item, index) {
-        vm.favoriteLocalStorage.forEach(function(i) {
-          if (item.id === i) {
-            vm.favorite.push(item);
-          }
-        });
-      });
-    },
-    deleteFavoriteItem(id) {
-      const vm = this;
-      let $id = id;
-      let result = vm.favoriteLocalStorage
-        .map(function(productItem) {
-          return productItem;
-        })
-        .indexOf($id);
-      vm.favoriteLocalStorage.splice(result, 1);
-      localStorage.setItem(
-        "favoriteStoredId",
-        JSON.stringify(vm.favoriteLocalStorage)
-      );
-      vm.getFavorite();
-      vm.updateQty();
-    },
-    fetch() {
-      // 重新取得 LocalStorage
-      const vm = this;
-      vm.favoriteLocalStorage.length = 0;
-      vm.favoriteLocalStorage = JSON.parse(
-        window.localStorage.getItem("favoriteStoredId")
-      );
-    },
-    updateQty() {
-      // 更新我的最愛數量
-      const vm = this;
-      vm.fetch();
-      vm.getFavorite();
-      vm.favoriteQty = vm.favoriteLocalStorage.length;
     }
   },
-  created() {
-    const vm = this;
-    vm.$bus.$on("favorite:refresh", () => {
-      vm.updateQty();
-    });
+  methods: {
+    getProducts () {
+      const vm = this
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/products/all`
+      this.$http.get(url).then(response => {
+        vm.products = response.data.products
+      })
+    },
+    getFavorite () {
+      const vm = this
+      vm.getProducts()
+      vm.favorite = []
+      vm.fetch()
+      vm.products.forEach(function (item, index) {
+        vm.favoriteLocalStorage.forEach(function (i) {
+          if (item.id === i) {
+            vm.favorite.push(item)
+          }
+        })
+      })
+    },
+    deleteFavoriteItem (id) {
+      const vm = this
+      let $id = id
+      let result = vm.favoriteLocalStorage
+        .map(function (productItem) {
+          return productItem
+        })
+        .indexOf($id)
+      vm.favoriteLocalStorage.splice(result, 1)
+      localStorage.setItem(
+        'favoriteStoredId',
+        JSON.stringify(vm.favoriteLocalStorage)
+      )
+      vm.getFavorite()
+      vm.updateQty()
+    },
+    fetch () {
+      // 重新取得 LocalStorage
+      const vm = this
+      vm.favoriteLocalStorage.length = 0
+      vm.favoriteLocalStorage = JSON.parse(
+        window.localStorage.getItem('favoriteStoredId')
+      )
+    },
+    updateQty () {
+      // 更新我的最愛數量
+      const vm = this
+      vm.fetch()
+      vm.getFavorite()
+      vm.favoriteQty = vm.favoriteLocalStorage.length
+    }
+  },
+  created () {
+    const vm = this
+    vm.$bus.$on('favorite:refresh', () => {
+      vm.updateQty()
+    })
   }
-};
+}
 </script>
 
 <style lang="scss" scope>

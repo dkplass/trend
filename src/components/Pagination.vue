@@ -35,12 +35,12 @@
 
 <script>
 export default {
-  name: "Pagination",
-  props: ["pagination"],
+  name: 'Pagination',
+  props: ['pagination'],
   methods: {
-    createPage(page) {
-      this.$emit("emitPage", page);
+    createPage (page) {
+      this.$emit('emitPage', page)
     }
   }
-};
+}
 </script>

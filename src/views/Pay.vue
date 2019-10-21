@@ -1,6 +1,5 @@
 <template>
   <div>
-    <loading :active.sync="isLoading"></loading>
     <div class="container">
       <ul class="row step">
         <li class="col-4 text-center" :class="{'active': step === 1}">確認購物車明細</li>
@@ -169,133 +168,132 @@
 </template>
 
 <script>
-import Cartlist from "../components/Cartlist";
+import Cartlist from '../components/Cartlist'
 export default {
   components: {
     Cartlist
   },
-  data() {
+  data () {
     return {
       step: 1,
       cartdata: {},
       form: {
         user: {
-          name: "",
-          email: "",
-          tel: "",
-          address: ""
+          name: '',
+          email: '',
+          tel: '',
+          address: ''
         },
-        message: ""
+        message: ''
       },
-      orderId: "",
+      orderId: '',
       order: {
         user: {}
-      },
-      isLoading: false
-    };
+      }
+    }
   },
   methods: {
-    getCart() {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`;
-      vm.isLoading = true;
+    getCart () {
+      const vm = this
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
+      vm.$store.dispatch('updateLoading', true)
       this.$http.get(url).then(response => {
-        vm.cartdata = response.data.data;
-        vm.isLoading = false;
-      });
+        vm.cartdata = response.data.data
+        vm.$store.dispatch('updateLoading', false)
+      })
     },
-    removeCartItem(id) {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${id}`;
-      vm.isLoading = true;
+    removeCartItem (id) {
+      const vm = this
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${id}`
+      vm.$store.dispatch('updateLoading', true)
       this.$http.delete(url).then(response => {
-        vm.isLoading = false;
-        vm.getCart();
-        this.$bus.$emit("cartQty:refresh");
-      });
+        vm.$store.dispatch('updateLoading', false)
+        vm.getCart()
+        this.$bus.$emit('cartQty:refresh')
+      })
     },
-    addCouponCode(couponCode) {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/coupon`;
+    addCouponCode (couponCode) {
+      const vm = this
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/coupon`
       const coupon = {
         code: couponCode
-      };
-      vm.isLoading = true;
+      }
+      vm.$store.dispatch('updateLoading', true)
       this.$http.post(url, { data: coupon }).then(response => {
         if (response.data.success) {
           this.$bus.$emit(
-            "message:push",
+            'message:push',
             `${response.data.message}`,
-            "success"
-          );
+            'success'
+          )
         } else {
-          this.$bus.$emit("message:push", `${response.data.message}`, "danger");
+          this.$bus.$emit('message:push', `${response.data.message}`, 'danger')
         }
 
-        vm.getCart();
-        vm.isLoading = false;
-      });
+        vm.getCart()
+        vm.$store.dispatch('updateLoading', false)
+      })
     },
-    createOrder() {
-      const vm = this;
-      const order = vm.form;
-      vm.isLoading = true;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/order`;
+    createOrder () {
+      const vm = this
+      const order = vm.form
+      vm.$store.dispatch('updateLoading', true)
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/order`
       this.$refs.observer.validate().then(isValid => {
         if (isValid) {
           this.$http.post(url, { data: order }).then(response => {
-            this.$bus.$emit("message:push", "訂單已建立", "success");
-            vm.isLoading = false;
+            this.$bus.$emit('message:push', '訂單已建立', 'success')
+            vm.$store.dispatch('updateLoading', false)
 
             if (response.data.success) {
-              vm.orderId = response.data.orderId;
-              vm.getOrder();
-              vm.step = 3;
+              vm.orderId = response.data.orderId
+              vm.getOrder()
+              vm.step = 3
             }
-          });
+          })
         } else {
-          this.$bus.$emit("message:push", "欄位不完整", "success");
-          vm.isLoading = false;
+          this.$bus.$emit('message:push', '欄位不完整', 'success')
+          vm.$store.dispatch('updateLoading', false)
         }
-      });
+      })
     },
-    getOrder() {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/order/${vm.orderId}`;
-      vm.step = 3;
-      vm.isLoading = true;
+    getOrder () {
+      const vm = this
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/order/${vm.orderId}`
+      vm.step = 3
+      vm.$store.dispatch('updateLoading', true)
       this.$http.get(url).then(response => {
-        console.log(vm.order);
-        vm.order = response.data.order;
-        vm.isLoading = false;
-      });
+        console.log(vm.order)
+        vm.order = response.data.order
+        vm.$store.dispatch('updateLoading', false)
+      })
     },
-    payOrder() {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/pay/${vm.orderId}`;
-      vm.isLoading = true;
+    payOrder () {
+      const vm = this
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/pay/${vm.orderId}`
+      vm.$store.dispatch('updateLoading', true)
       this.$http.post(url).then(response => {
         if (response.data.success) {
           this.$bus.$emit(
-            "message:push",
+            'message:push',
             `${response.data.message}`,
-            "success"
-          );
-          this.$bus.$emit("cartQty:refresh");
-          this.getOrder();
+            'success'
+          )
+          this.$bus.$emit('cartQty:refresh')
+          this.getOrder()
         } else {
-          this.$bus.$emit("message:push", `${response.data.message}`, "danger");
-          this.$bus.$emit("cartQty:refresh");
-          this.getOrder();
+          this.$bus.$emit('message:push', `${response.data.message}`, 'danger')
+          this.$bus.$emit('cartQty:refresh')
+          this.getOrder()
         }
-        vm.isLoading = false;
-      });
+        vm.$store.dispatch('updateLoading', false)
+      })
     }
   },
-  created() {
-    this.getCart();
+  created () {
+    this.getCart()
   }
-};
+}
 </script>
 
 <style lang="scss" scope>

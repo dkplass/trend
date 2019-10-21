@@ -16,38 +16,38 @@
 </template>
 <script>
 export default {
-  name: "Breadcrumb",
-  props: ["category"],
-  data() {
+  name: 'Breadcrumb',
+  props: ['category'],
+  data () {
     return {
       breadcrumbList: []
-    };
+    }
   },
   methods: {
-    updateBreadcrumbList() {
-      const vm = this;
-      vm.breadcrumbList = vm.$route.meta.breadcrumb;
+    updateBreadcrumbList () {
+      const vm = this
+      vm.breadcrumbList = vm.$route.meta.breadcrumb
     },
-    routeTo(routeGo) {
-      const vm = this;
+    routeTo (routeGo) {
+      const vm = this
       if (vm.breadcrumbList[routeGo].link) {
-        this.$router.push(vm.breadcrumbList[routeGo].link);
+        this.$router.push(vm.breadcrumbList[routeGo].link)
       }
     }
   },
   watch: {
-    $route(to, from) {
+    $route (to, from) {
       // 監聽$route變化
       // const toDepth = to.path.split('/').length
       // const fromDepth = from.path.split('/').length
       // this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
-      this.updateBreadcrumbList();
+      this.updateBreadcrumbList()
     }
   },
-  mounted() {
-    this.updateBreadcrumbList();
+  mounted () {
+    this.updateBreadcrumbList()
   }
-};
+}
 </script>
 <style>
 .breadcrumb-item {

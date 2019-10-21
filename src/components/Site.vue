@@ -105,17 +105,17 @@
 </template>
 
 <script>
-import $ from "jquery";
-import Alert from "./AlertMessage";
-import CartQty from "./Countcart";
-import Favorite from "./Favorite";
+import $ from 'jquery'
+import Alert from './AlertMessage'
+import CartQty from './Countcart'
+import Favorite from './Favorite'
 export default {
   components: {
     Alert,
     CartQty,
     Favorite
   }
-};
+}
 </script>
 
 <style lang="scss" scope>

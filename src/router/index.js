@@ -18,7 +18,7 @@ const routes = [
         name: 'Home',
         component: () => import('../views/Home.vue'),
         meta: {
-          title: '首頁',
+          title: '首頁'
         }
       },
       {
@@ -58,7 +58,7 @@ const routes = [
         name: 'Pay',
         component: () => import('../views/Pay.vue'),
         meta: {
-          title: '結帳頁面',
+          title: '結帳頁面'
         }
       },
       {
@@ -83,9 +83,9 @@ const routes = [
     name: 'Login',
     path: '/login',
     component: () => import('../views/admin/Login.vue'),
-    meta: {       
-      title: '後台管理系統登入',
-    },
+    meta: {
+      title: '後台管理系統登入'
+    }
   },
   {
     name: 'Dashboard',
@@ -96,31 +96,31 @@ const routes = [
         path: 'products',
         name: 'Products',
         component: () => import('../views/admin/Products.vue'),
-        meta: { 
+        meta: {
           requiresAuth: true,
-          title: '產品管理頁面',
-        },
+          title: '產品管理頁面'
+        }
       },
       {
         path: 'coupons',
         name: 'Coupons',
         component: () => import('../views/admin/Coupons.vue'),
-        meta: { 
+        meta: {
           requiresAuth: true,
-          title: '產品管理頁面', 
-        },
+          title: '產品管理頁面'
+        }
       },
       {
         path: 'orders',
         name: 'Orders',
         component: () => import('../views/admin/Orders.vue'),
-        meta: { 
+        meta: {
           requiresAuth: true,
-          title: '產品管理頁面',
-        },
+          title: '產品管理頁面'
+        }
       }
-    ],
-  },
+    ]
+  }
 ]
 
 const router = new VueRouter({

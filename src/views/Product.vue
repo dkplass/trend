@@ -1,6 +1,5 @@
 <template>
   <div>
-    <loading :active.sync="isLoading"></loading>
     <div class="container">
       <div class="col-12">
         <Breadcrumb :category="product.title"></Breadcrumb>
@@ -96,99 +95,98 @@
 </template>
 
 <script>
-import Breadcrumb from "../components/Breadcrumb";
+import Breadcrumb from '../components/Breadcrumb'
 export default {
   components: {
     Breadcrumb
   },
-  data() {
+  data () {
     return {
-      isLoading: false,
       product: {},
-      productId: "",
+      productId: '',
       qty: 1,
       favoriteLocalStorage:
-        JSON.parse(localStorage.getItem("favoriteStoredId")) || [],
-      heartClass: "far fa-heart"
-    };
+        JSON.parse(localStorage.getItem('favoriteStoredId')) || [],
+      heartClass: 'far fa-heart'
+    }
   },
   methods: {
-    getProduct() {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/product/${vm.productId}`;
-      vm.isLoading = true;
+    getProduct () {
+      const vm = this
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/product/${vm.productId}`
+      vm.$store.dispatch('updateLoading', true)
       this.$http.get(url).then(response => {
-        vm.product = response.data.product;
-        vm.isLoading = false;
-      });
+        vm.product = response.data.product
+        vm.$store.dispatch('updateLoading', false)
+      })
     },
-    addToCart(id, n = 1) {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`;
+    addToCart (id, n = 1) {
+      const vm = this
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
       const cart = {
         product_id: id,
         qty: n
-      };
+      }
       this.$http.post(url, { data: cart }).then(response => {
-        this.$bus.$emit("message:push", `${response.data.message}`, "success");
-        this.$bus.$emit("cartQty:refresh");
-      });
+        this.$bus.$emit('message:push', `${response.data.message}`, 'success')
+        this.$bus.$emit('cartQty:refresh')
+      })
     },
-    addFavorite() {
-      const vm = this;
-      let $id = vm.product.id;
+    addFavorite () {
+      const vm = this
+      let $id = vm.product.id
       let result = vm.favoriteLocalStorage
-        .map(function(productItem) {
-          return productItem;
+        .map(function (productItem) {
+          return productItem
         })
-        .indexOf($id);
+        .indexOf($id)
       if (result === -1) {
         // 變更最愛按鈕樣式
-        vm.heartClass = "fas fa-heart";
+        vm.heartClass = 'fas fa-heart'
         // 將此商品ID存進localstorage
-        vm.favoriteLocalStorage.push(vm.product.id);
+        vm.favoriteLocalStorage.push(vm.product.id)
         localStorage.setItem(
-          "favoriteStoredId",
+          'favoriteStoredId',
           JSON.stringify(vm.favoriteLocalStorage)
-        );
+        )
       } else {
         // 變更最愛按鈕樣式
-        vm.heartClass = "far fa-heart";
+        vm.heartClass = 'far fa-heart'
         // 將此商品ID從localstorage刪除
-        vm.favoriteLocalStorage.splice(result, 1);
+        vm.favoriteLocalStorage.splice(result, 1)
         localStorage.setItem(
-          "favoriteStoredId",
+          'favoriteStoredId',
           JSON.stringify(vm.favoriteLocalStorage)
-        );
+        )
       }
 
-      this.$bus.$emit("favorite:refresh");
+      this.$bus.$emit('favorite:refresh')
     }
   },
   computed: {
-    favoriteClass() {
-      const vm = this;
+    favoriteClass () {
+      const vm = this
 
       let result = vm.favoriteLocalStorage
         .map(favoriteItem => {
-          return favoriteItem;
+          return favoriteItem
         })
-        .indexOf(vm.productId);
+        .indexOf(vm.productId)
 
       if (result > -1) {
-        return (vm.heartClass = "fas fa-heart");
+        return (vm.heartClass = 'fas fa-heart')
       } else {
-        return (vm.heartClass = "far fa-heart");
+        return (vm.heartClass = 'far fa-heart')
       }
-      return vm.heartClass;
+      return vm.heartClass
     }
   },
-  created() {
-    this.productId = this.$route.params.productId;
-    this.getProduct();
-    this.$bus.$emit("favorite:refresh");
+  created () {
+    this.productId = this.$route.params.productId
+    this.getProduct()
+    this.$bus.$emit('favorite:refresh')
   }
-};
+}
 </script>
 
 <style lang="scss" scope>

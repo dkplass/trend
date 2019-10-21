@@ -9,13 +9,13 @@
       </ol>
       <div class="carousel-inner">
         <div class="carousel-item first-item active">
-          <div class="ring"></div>          
+          <div class="ring"></div>
         </div>
         <div class="carousel-item second-item">
-          <div class="ring"></div>          
+          <div class="ring"></div>
         </div>
         <div class="carousel-item third-item">
-          <div class="ring"></div>          
+          <div class="ring"></div>
         </div>
       </div>
       <a
@@ -43,8 +43,8 @@
           <li class="item text-center col-sm-3 col-3"
             v-for="(category, key) in categories" :key="key"
             @click.prevent="goCategory(category.title)">
-            {{ category.title }}            
-          </li>          
+            {{ category.title }}
+          </li>
         </ul>
       </div>
 			<section class="index-content mt-4 text-center">
@@ -55,32 +55,32 @@
               <div class="advertise">新品上架</div>
             </div>
             <div class="left-bottom bg-light mt-4">
-              <h3>電子報訂閱</h3>    
-              <ValidationObserver ref="observer" v-slot="{ valid }">          
+              <h3>電子報訂閱</h3>
+              <ValidationObserver ref="observer" v-slot="{ valid }">
                 <ValidationProvider rules="required|email" name="email" v-slot="{ errors }" slim>
-                  <div class="input-group px-4">                                 
-                    <input type="text" 
-                      class="form-control" 
-                      placeholder="電子郵件" 
-                      id="email"  
-                      v-model="form.email"                        
-                      aria-label="Recipient's email"                     
+                  <div class="input-group px-4">
+                    <input type="text"
+                      class="form-control"
+                      placeholder="電子郵件"
+                      id="email"
+                      v-model="form.email"
+                      aria-label="Recipient's email"
                       aria-describedby="button-addon2">
                     <div class="input-group-append">
-                      <button class="btn btn-outline-secondary" type="button" :disabled="!valid" @click.prevent="subscribe">訂閱</button>                      
+                      <button class="btn btn-outline-secondary" type="button" :disabled="!valid" @click.prevent="subscribe">訂閱</button>
                     </div>
                   </div>
-                </ValidationProvider>  
-              </ValidationObserver>           
+                </ValidationProvider>
+              </ValidationObserver>
             </div>
           </div>
           <div class="col-md-6">
             <div class="right-top bg-light">
               <h3>夏季特賣</h3>
-              <router-link to="/shop" class="btn btn-customize">Go Shop</router-link>              
+              <router-link to="/shop" class="btn btn-customize">Go Shop</router-link>
             </div>
             <div class="block-item right-bottom mt-4">
-              <div class="layer"></div>              
+              <div class="layer"></div>
             </div>
           </div>
         </div>
@@ -91,39 +91,39 @@
 
 <script>
 export default {
-  data() {
-    return {      
+  data () {
+    return {
       form: {
-        email: "",
+        email: ''
       },
       categories: [
         { title: '全部' },
         { title: '上衣' },
         { title: '褲裝' },
-        { title: '鞋類', },        
-			],      
-    };
-  },
-  methods: {
-    subscribe() {         
-      this.$refs.observer.validate().then((isValid) => {
-        if (isValid) {                           
-          this.$bus.$emit("message:push", "訂閱成功", "success");
-        } else {
-          this.$bus.$emit("message:push", "電子郵件格式不符合", "danger");                    
-        }
-      });
-    },
-    goCategory(categoryTitle) {
-      const vm = this;
-      vm.$router.push({ path: '/shop', query: { category: categoryTitle } });
+        { title: '鞋類' }
+      ]
     }
   },
-  created() {
-    this.$bus.$emit("cartQty:refresh");
-    this.$bus.$emit("favorite:refresh");
+  methods: {
+    subscribe () {
+      this.$refs.observer.validate().then((isValid) => {
+        if (isValid) {
+          this.$bus.$emit('message:push', '訂閱成功', 'success')
+        } else {
+          this.$bus.$emit('message:push', '電子郵件格式不符合', 'danger')
+        }
+      })
+    },
+    goCategory (categoryTitle) {
+      const vm = this
+      vm.$router.push({ path: '/shop', query: { category: categoryTitle } })
+    }
+  },
+  created () {
+    this.$bus.$emit('cartQty:refresh')
+    this.$bus.$emit('favorite:refresh')
   }
-};
+}
 </script>
 
 <style lang="scss" scope>

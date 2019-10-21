@@ -20,80 +20,78 @@
 </template>
 
 <script>
-import $ from "jquery";
-import Breadcrumb from "../components/Breadcrumb";
+import $ from 'jquery'
+import Breadcrumb from '../components/Breadcrumb'
 export default {
   components: {
     Breadcrumb
   },
-  data() {
+  data () {
     return {
       status: false,
       coupon: [
         {
           couponId: 1,
-          name: "九折優惠卷代碼",
-          coupon_code: "9off"
+          name: '九折優惠卷',
+          coupon_code: '9off'
         },
         {
           couponId: 2,
-          name: "八折優惠卷代碼",
-          coupon_code: "8off"
+          name: '八折優惠卷',
+          coupon_code: '8off'
         },
         {
           couponId: 3,
-          name: "七折優惠卷代碼",
-          coupon_code: "7off"
+          name: '七折優惠卷',
+          coupon_code: '7off'
         }
       ],
       timeout: null
-    };
+    }
   },
   methods: {
-    start() {
-      const vm = this;
-      let $start = document.querySelector(".event-btn");
-      let $prize = document.querySelector(".prize-name");
+    start () {
+      const vm = this
+      let $start = document.querySelector('.event-btn')
+      let $prize = document.querySelector('.prize-name')
 
       if (!vm.status) {
-        // $start.textContent = '停止';
-        $start.classList.add("s-move");
+        $start.classList.add('s-move')
 
         vm.timeout = setInterval(() => {
-          let random = parseInt(Math.random() * vm.coupon.length);
-          let randomName = `${vm.coupon[random].name}`;
-          $prize.textContent = randomName;
-        }, 10);
+          let random = parseInt(Math.random() * vm.coupon.length)
+          let randomName = `${vm.coupon[random].name}`
+          $prize.textContent = randomName
+        }, 10)
 
-        vm.status = true;
+        vm.status = true
       }
     },
-    stop() {
-      // $start.textContent = '開始抽獎';
-      const vm = this;
-      let $prize = document.querySelector(".prize-name");
-      clearInterval(vm.timeout);
+    stop () {
+      const vm = this
+      let $prize = document.querySelector('.prize-name')
+      clearInterval(vm.timeout)
       if (vm.status) {
         for (let i = 1; i <= 15; i++) {
-          (function(j) {
+          (function (j) {
             setTimeout(() => {
-              let random = parseInt(Math.random() * vm.coupon.length);
-              let randomName = `${vm.coupon[random].name}`;
-              $prize.textContent = randomName;
+              let random = parseInt(Math.random() * vm.coupon.length)
+              let randomName = `${vm.coupon[random].name}`
+              $prize.textContent = randomName
 
               if (j === 15) {
-                randomName = `恭喜獲得 ${vm.coupon[random].name} 請複製代碼 ${vm.coupon[random].coupon_code}`;
-                $prize.textContent = randomName;
+                randomName = `恭喜獲得 ${vm.coupon[random].name} 請複製代碼 ${vm.coupon[random].coupon_code}`
+                $prize.textContent = randomName
               }
-            }, i * j * 12);
-          })(i);
+            }, i * j * 12)
+          })(i)
         }
-        vm.status = false;
+        vm.status = false
       }
     }
   },
   watch: {}
-};
+}
 </script>
 
 <style lang="scss" scope>

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <loading :active.sync="isLoading"></loading>
     <div class="container">
       <div class="col-12">
         <Breadcrumb :category="category"></Breadcrumb>
@@ -73,109 +72,108 @@
   </div>
 </template>
 <script>
-import Breadcrumb from "../components/Breadcrumb";
-import scrollReveal from "scrollreveal";
+import Breadcrumb from '../components/Breadcrumb'
+import scrollReveal from 'scrollreveal'
 export default {
   components: {
     Breadcrumb
   },
-  data() {
+  data () {
     return {
       products: [],
       breadcrumb: [],
-      filter: "",
+      filter: '',
       categories: [
-        { title: "全部" },
-        { title: "上衣" },
-        { title: "褲裝" },
-        { title: "鞋類" }
+        { title: '全部' },
+        { title: '上衣' },
+        { title: '褲裝' },
+        { title: '鞋類' }
       ],
-      category: "全部",
-      searchText: "",
+      category: '全部',
+      searchText: '',
       product: {},
-      isLoading: false,
       status: {
-        loadingItem: ""
+        loadingItem: ''
       },
-      scrollReveal: scrollReveal() //註冊 scrollReveal
-    };
+      scrollReveal: scrollReveal() // 註冊 scrollReveal
+    }
   },
   methods: {
-    getProducts() {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/products/all`;
-      vm.isLoading = true;
+    getProducts () {
+      const vm = this
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/products/all`
+      vm.$store.dispatch('updateLoading', true)
       this.$http.get(url).then(response => {
-        vm.products = response.data.products;
-        vm.isLoading = false;
-      });
+        vm.products = response.data.products
+        vm.$store.dispatch('updateLoading', false)
+      })
     },
-    getProduct(id) {
-      const vm = this;
-      vm.$router.push(`/shop/${id}`);
+    getProduct (id) {
+      const vm = this
+      vm.$router.push(`/shop/${id}`)
     },
-    getQuery() {
-      const vm = this;
+    getQuery () {
+      const vm = this
       if (vm.$route.query.category) {
-        vm.category = vm.$route.query.category;
+        vm.category = vm.$route.query.category
       }
     },
-    getCategory(category) {
-      const vm = this;
-      vm.category = category;
+    getCategory (category) {
+      const vm = this
+      vm.category = category
 
       if (vm.filter) {
-        vm.filter = "";
+        vm.filter = ''
       }
     },
-    search() {
-      const vm = this;
-      vm.filter = vm.searchText;
-      vm.searchText = "";
+    search () {
+      const vm = this
+      vm.filter = vm.searchText
+      vm.searchText = ''
     },
-    addToCart(id, n = 1) {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`;
+    addToCart (id, n = 1) {
+      const vm = this
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
       const cart = {
         product_id: id,
         qty: n
-      };
+      }
       this.$http.post(url, { data: cart }).then(response => {
-        this.$bus.$emit("message:push", `${response.data.message}`, "success");
-        this.$bus.$emit("cartQty:refresh");
-      });
+        this.$bus.$emit('message:push', `${response.data.message}`, 'success')
+        this.$bus.$emit('cartQty:refresh')
+      })
     }
   },
   computed: {
-    filterProducts() {
-      const vm = this;
+    filterProducts () {
+      const vm = this
       if (vm.filter) {
-        vm.category = "全部";
-        return vm.products.filter(item => item.title.indexOf(vm.filter) !== -1);
+        vm.category = '全部'
+        return vm.products.filter(item => item.title.indexOf(vm.filter) !== -1)
       }
 
-      if (vm.category !== "全部") {
-        return vm.products.filter(item => item.category === vm.category);
+      if (vm.category !== '全部') {
+        return vm.products.filter(item => item.category === vm.category)
       }
 
-      return vm.products;
+      return vm.products
     }
   },
-  created() {
-    this.getQuery();
-    this.getProducts();
-    this.$bus.$emit("favorite:refresh");
+  created () {
+    this.getQuery()
+    this.getProducts()
+    this.$bus.$emit('favorite:refresh')
   },
-  updated() {
-    this.scrollReveal.reveal(".card", {
-      distance: "0px",
+  updated () {
+    this.scrollReveal.reveal('.card', {
+      distance: '0px',
       duration: 500,
       delay: 0,
-      easing: "linear",
+      easing: 'linear',
       mobile: true
-    });
+    })
   }
-};
+}
 </script>
 <style lang="scss" scope>
 .category-tab {

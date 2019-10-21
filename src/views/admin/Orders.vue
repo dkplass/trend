@@ -1,6 +1,5 @@
 <template>
   <div>
-    <loading :active.sync="isLoading"></loading>
     <table class="table mt-4">
       <thead>
         <tr>
@@ -39,48 +38,47 @@
 </template>
 
 <script>
-import Pagination from "../../components/Pagination";
+import Pagination from '../../components/Pagination'
 export default {
-  data() {
+  data () {
     return {
       orders: {},
       isNew: false,
-      pagination: {},
-      isLoading: false
-    };
+      pagination: {}
+    }
   },
   components: {
     Pagination
   },
   methods: {
-    getOrders(currentPage = 1) {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/orders?page=${currentPage}`;
-      vm.isLoading = true;
+    getOrders (currentPage = 1) {
+      const vm = this
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/orders?page=${currentPage}`
+      vm.$store.dispatch('updateLoading', true)
       this.$http.get(url, vm.tempProduct).then(response => {
-        vm.orders = response.data.orders;
-        vm.pagination = response.data.pagination;
-        vm.isLoading = false;
-        console.log(response);
-      });
+        vm.orders = response.data.orders
+        vm.pagination = response.data.pagination
+        vm.$store.dispatch('updateLoading', false)
+        console.log(response)
+      })
     }
   },
   computed: {
-    sortOrder() {
-      const vm = this;
-      let newOrder = [];
+    sortOrder () {
+      const vm = this
+      let newOrder = []
       if (vm.orders.length) {
         newOrder = vm.orders.sort((a, b) => {
-          const aIsPaid = a.is_paid ? 1 : 0;
-          const bIsPaid = b.is_paid ? 1 : 0;
-          return bIsPaid - aIsPaid;
-        });
+          const aIsPaid = a.is_paid ? 1 : 0
+          const bIsPaid = b.is_paid ? 1 : 0
+          return bIsPaid - aIsPaid
+        })
       }
-      return newOrder;
+      return newOrder
     }
   },
-  created() {
-    this.getOrders();    
+  created () {
+    this.getOrders()
   }
-};
+}
 </script>

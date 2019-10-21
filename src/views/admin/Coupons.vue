@@ -1,7 +1,6 @@
 <template>
   <div>
     <!-- 頁面loading樣式 -->
-    <loading :active.sync="isLoading"></loading>
     <div class="text-right mt-4">
       <button class="btn btn-primary" @click="openCouponModal(true)">建立新的優惠卷</button>
     </div>
@@ -142,97 +141,96 @@
 </template>
 
 <script>
-import $ from "jquery";
+import $ from 'jquery'
 export default {
-  data() {
+  data () {
     return {
       coupons: [],
       tempCoupon: {
-        title: "",
+        title: '',
         is_enabled: 0,
         percent: 100,
         due_date: 0,
-        code: ""
+        code: ''
       },
       due_date: new Date(),
-      isNew: false,
-      isLoading: false
-    };
+      isNew: false
+    }
   },
   watch: {
-    due_date() {
-      const vm = this;
-      const timestamp = Math.floor(new Date(vm.due_date) / 1000);
-      vm.tempCoupon.due_date = timestamp;
+    due_date () {
+      const vm = this
+      const timestamp = Math.floor(new Date(vm.due_date) / 1000)
+      vm.tempCoupon.due_date = timestamp
     }
   },
   methods: {
-    getCoupons() {
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/coupons`;
-      const vm = this;
-      vm.isLoading = true;
+    getCoupons () {
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/coupons`
+      const vm = this
+      vm.$store.dispatch('updateLoading', true)
       this.$http.get(url).then(response => {
         if (response.data.success) {
-          vm.isLoading = false;
-          vm.coupons = response.data.coupons;
-          console.log(response);
+          vm.$store.dispatch('updateLoading', false)
+          vm.coupons = response.data.coupons
+          console.log(response)
         }
-      });
+      })
     },
-    openCouponModal(isNew, item) {
-      const vm = this;
-      $("#couponModal").modal("show");
-      vm.isNew = isNew;
+    openCouponModal (isNew, item) {
+      const vm = this
+      $('#couponModal').modal('show')
+      vm.isNew = isNew
       if (vm.isNew) {
-        vm.tempCoupon = {};
+        vm.tempCoupon = {}
       } else {
-        vm.tempCoupon = Object.assign({}, item);
+        vm.tempCoupon = Object.assign({}, item)
         const dateAndTime = new Date(vm.tempCoupon.due_date * 1000)
           .toISOString()
-          .split("T");
-        vm.due_date = dateAndTime[0];
+          .split('T')
+        vm.due_date = dateAndTime[0]
       }
     },
-    updateCoupon() {
-      const vm = this;
+    updateCoupon () {
+      const vm = this
       if (vm.isNew) {
-        const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/coupon`;
+        const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/coupon`
         this.$http.post(url, { data: vm.tempCoupon }).then(response => {
-          console.log(response, vm.tempCoupon);
-          $("#couponModal").modal("hide");
-          this.getCoupons();
-        });
+          console.log(response, vm.tempCoupon)
+          $('#couponModal').modal('hide')
+          this.getCoupons()
+        })
       } else {
-        const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/coupon/${vm.tempCoupon.id}`;
-        vm.due_date = new Date(vm.tempCoupon.due_date * 1000);
+        const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/coupon/${vm.tempCoupon.id}`
+        vm.due_date = new Date(vm.tempCoupon.due_date * 1000)
         this.$http.put(url, { data: vm.tempCoupon }).then(response => {
-          console.log(response);
-          $("#couponModal").modal("hide");
-          this.getCoupons();
-        });
+          console.log(response)
+          $('#couponModal').modal('hide')
+          this.getCoupons()
+        })
       }
     },
-    deleteModal(item) {
-      this.tempCoupon = Object.assign({}, item);
-      $("#deleteCouponModal").modal("show");
+    deleteModal (item) {
+      this.tempCoupon = Object.assign({}, item)
+      $('#deleteCouponModal').modal('show')
     },
-    deleteCoupon() {
-      const vm = this;
-      let url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/coupon/${vm.tempCoupon.id}`;
+    deleteCoupon () {
+      const vm = this
+      let url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/coupon/${vm.tempCoupon.id}`
       this.$http.delete(url).then(response => {
         if (response.data.success) {
-          $("#deleteCouponModal").modal("hide");
-          vm.getCoupons();
+          $('#deleteCouponModal').modal('hide')
+          vm.getCoupons()
         } else {
-          $("#deleteCouponModal").modal("hide");
-          vm.getCoupons();
-          console.log("刪除優惠卷失敗");
+          $('#deleteCouponModal').modal('hide')
+          vm.getCoupons()
+          console.log('刪除優惠卷失敗')
         }
-      });
+      })
     }
   },
-  created() {
-    this.getCoupons();
+  created () {
+    this.getCoupons()
   }
-};
+}
 </script>
