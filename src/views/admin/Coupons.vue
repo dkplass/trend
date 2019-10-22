@@ -173,7 +173,6 @@ export default {
         if (response.data.success) {
           this.$store.dispatch('updateLoading', false)
           vm.coupons = response.data.coupons
-          console.log(response)
         }
       })
     },
@@ -196,7 +195,6 @@ export default {
       if (vm.isNew) {
         const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/coupon`
         this.$http.post(url, { data: vm.tempCoupon }).then(response => {
-          console.log(response, vm.tempCoupon)
           $('#couponModal').modal('hide')
           this.getCoupons()
         })
@@ -204,7 +202,6 @@ export default {
         const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/coupon/${vm.tempCoupon.id}`
         vm.due_date = new Date(vm.tempCoupon.due_date * 1000)
         this.$http.put(url, { data: vm.tempCoupon }).then(response => {
-          console.log(response)
           $('#couponModal').modal('hide')
           this.getCoupons()
         })
@@ -224,7 +221,6 @@ export default {
         } else {
           $('#deleteCouponModal').modal('hide')
           vm.getCoupons()
-          console.log('刪除優惠卷失敗')
         }
       })
     }

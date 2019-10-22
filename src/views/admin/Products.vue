@@ -264,19 +264,16 @@ export default {
         httpMethod = 'put'
       }
       this.$http[httpMethod](api, { data: vm.tempProduct }).then(response => {
-        console.log(response.data)
         if (response.data.success) {
           $('#productModal').modal('hide')
           vm.getProducts()
         } else {
           $('#productModal').modal('hide')
           vm.getProducts()
-          console.log('新增失敗')
         }
       })
     },
     deleteModal (item) {
-      console.log(item)
       this.tempProduct = Object.assign({}, item)
       $('#deleteProductModal').modal('show')
     },
@@ -284,19 +281,16 @@ export default {
       const vm = this
       let api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/product/${vm.tempProduct.id}`
       this.$http.delete(api).then(response => {
-        console.log(response.data)
         if (response.data.success) {
           $('#deleteProductModal').modal('hide')
           vm.getProducts()
         } else {
           $('#deleteProductModal').modal('hide')
           vm.getProducts()
-          console.log('刪除商品失敗')
         }
       })
     },
     uploadFile () {
-      console.log(this)
       const uploadedFile = this.$refs.files.files[0]
       const upload = this.$refs.files
       const vm = this
@@ -311,7 +305,6 @@ export default {
           }
         })
         .then(response => {
-          console.log(response.data)
           if (response.data.success) {
             vm.status.fileUploading = false
             vm.$set(vm.tempProduct, 'imageUrl', response.data.imageUrl)

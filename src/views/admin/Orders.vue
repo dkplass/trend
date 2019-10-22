@@ -59,7 +59,6 @@ export default {
         vm.orders = response.data.orders
         vm.pagination = response.data.pagination
         this.$store.dispatch('updateLoading', false)
-        console.log(response)
       })
     }
   },
