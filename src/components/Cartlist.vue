@@ -10,7 +10,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, key) in cartlist" :key="key">
+        <tr v-for="(item, key) in cartdata.carts" :key="key">
           <td width="30" class="align-middle">
             <button
               type="button"
@@ -59,18 +59,10 @@ export default {
   },
   methods: {
     removeCartItem (id) {
-      console.log(id)
       this.$emit('emitCartItemId', id)
     },
     addCouponCode () {
       this.$emit('couponCode', this.coupon_code)
-    }
-  },
-  computed: {
-    cartlist () {
-      console.log(this.cartdata)
-      const vm = this
-      return vm.cartdata.carts
     }
   }
 }

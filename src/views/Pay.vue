@@ -2,26 +2,27 @@
   <div>
     <div class="container">
       <ul class="row step">
-        <li class="col-4 text-center" :class="{'active': step === 1}">確認購物車明細</li>
-        <li class="col-4 text-center" :class="{'active': step === 2}">填寫購物人資訊</li>
-        <li class="col-4 text-center" :class="{'active': step === 3}">付款/完成訂單</li>
+        <li class="col-4 text-center step-node" :class="{'active': step === 1}">確認購物車明細</li>
+        <li class="col-4 text-center step-node" :class="{'active': step === 2}">填寫購物人資訊</li>
+        <li class="col-4 text-center step-node" :class="{'active': step === 3}">付款/完成訂單</li>
       </ul>
       <template v-if="step === 1">
         <Cartlist
-          :cartdata="cartdata"
+          :cartdata="cart"
           @emitCartItemId="removeCartItem"
-          @couponCode="addCouponCode"
-          v-if="cartdata.carts && cartdata.carts.length"
-        ></Cartlist>
+          @couponCode="addCouponCode"></Cartlist>
         <div class="mb-4 step-btn">
           <router-link to="/shop" class="btn btn-secondary float-left">
             <i class="fas fa-arrow-left"></i>
             繼續購買
           </router-link>
-          <a href="#" class="btn btn-danger d-inline-block float-right" @click.prevent="step = 2">
-            下一步，填寫訂購資料
+          <button class="btn btn-danger d-inline-block float-right"
+            @click.prevent="step = 2"
+            :disabled="cart.carts.length === 0">
+            <span class="px-1" v-if="cart.carts.length === 0">請選購商品</span>
+            <span class="px-1" v-else>下一步，填寫訂購資料</span>
             <i class="fas fa-arrow-right"></i>
-          </a>
+          </button>
         </div>
       </template>
       <div v-if="step === 2" class="my-5 row justify-content-center">
@@ -36,7 +37,7 @@
             <div class="form-group">
               <label for="useremail">Email</label>
               <input
-                type="text"
+                type="email"
                 class="form-control"
                 id="useremail"
                 v-model="form.user.email"
@@ -66,7 +67,7 @@
             <div class="form-group">
               <label for="usertel">收件人電話</label>
               <input
-                type="tel"
+                type="text"
                 class="form-control"
                 id="usertel"
                 v-model="form.user.tel"
@@ -81,7 +82,7 @@
             <div class="form-group">
               <label for="useraddress">收件人地址</label>
               <input
-                type="address"
+                type="text"
                 class="form-control"
                 id="useraddress"
                 v-model="form.user.address"
@@ -96,7 +97,7 @@
             <label for="useraddress">留言</label>
             <textarea name id class="form-control" v-model="form.message" cols="30" rows="10"></textarea>
           </div>
-          <div class="col-12 mb-4 mt-5 step-btn">
+          <div class="mb-4 mt-5 step-btn">
             <router-link to="/shop" class="btn btn-secondary float-left">
               <i class="fas fa-arrow-left"></i>
               上一步，確認購物車明細
@@ -168,6 +169,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import Cartlist from '../components/Cartlist'
 export default {
   components: {
@@ -176,7 +178,6 @@ export default {
   data () {
     return {
       step: 1,
-      cartdata: {},
       form: {
         user: {
           name: '',
@@ -193,24 +194,8 @@ export default {
     }
   },
   methods: {
-    getCart () {
-      const vm = this
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
-      vm.$store.dispatch('updateLoading', true)
-      this.$http.get(url).then(response => {
-        vm.cartdata = response.data.data
-        vm.$store.dispatch('updateLoading', false)
-      })
-    },
     removeCartItem (id) {
-      const vm = this
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${id}`
-      vm.$store.dispatch('updateLoading', true)
-      this.$http.delete(url).then(response => {
-        vm.$store.dispatch('updateLoading', false)
-        vm.getCart()
-        this.$bus.$emit('cartQty:refresh')
-      })
+      this.$store.dispatch('cartsModules/removeCartItem', id)
     },
     addCouponCode (couponCode) {
       const vm = this
@@ -263,7 +248,6 @@ export default {
       vm.step = 3
       vm.$store.dispatch('updateLoading', true)
       this.$http.get(url).then(response => {
-        console.log(vm.order)
         vm.order = response.data.order
         vm.$store.dispatch('updateLoading', false)
       })
@@ -288,7 +272,11 @@ export default {
         }
         vm.$store.dispatch('updateLoading', false)
       })
-    }
+    },
+    ...mapActions('cartsModules', ['getCart'])
+  },
+  computed: {
+    ...mapGetters('cartsModules', ['cart'])
   },
   created () {
     this.getCart()
@@ -302,7 +290,7 @@ export default {
   overflow: hidden;
   list-style-type: none;
   padding: 0;
-  li {
+  .step-node {
     color: #000000;
     text-transform: uppercase;
     font-size: 1rem;
@@ -325,7 +313,7 @@ export default {
       }
     }
   }
-  li + li {
+  .step-node + .step-node {
     &:after {
       content: "";
       width: 100%;
@@ -337,8 +325,8 @@ export default {
       z-index: -1;
     }
   }
-  li.active:before,
-  li.active:after {
+  .step-node.active:before,
+  .step-node.active:after {
     background-color: #8f8260;
     color: white;
   }
@@ -348,7 +336,7 @@ export default {
 }
 @media (max-width: 576px) {
   .step {
-    li {
+    .step-node {
       font-size: 0.6rem;
     }
   }

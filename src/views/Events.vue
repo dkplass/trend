@@ -1,17 +1,15 @@
 <template>
   <div>
     <div class="container">
-      <div class="col-12">
-        <Breadcrumb></Breadcrumb>
-        <div class="flip-game">
-          <div class="event-card bg-dark row mx-auto">
-            <div class="col-12 top">
-              <div class="prize-name">點擊按鈕抽獎</div>
-            </div>
-            <div class="col-12 bottom">
-              <div class="event-btn btn-start" @click="start" v-if="status  === false">開始抽獎</div>
-              <div class="event-btn btn-start" @click="stop" v-else>停止</div>
-            </div>
+      <Breadcrumb></Breadcrumb>
+      <div class="flip-game">
+        <div class="event-card bg-dark row mx-auto">
+          <div class="col-12 top">
+            <div class="prize-name">點擊按鈕抽獎</div>
+          </div>
+          <div class="col-12 bottom">
+            <div class="event-btn btn-start" @click="start" v-if="status  === false">開始抽獎</div>
+            <div class="event-btn btn-start" @click="stop" v-else>停止</div>
           </div>
         </div>
       </div>
@@ -20,7 +18,6 @@
 </template>
 
 <script>
-import $ from 'jquery'
 import Breadcrumb from '../components/Breadcrumb'
 export default {
   components: {

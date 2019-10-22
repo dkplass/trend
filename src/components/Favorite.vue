@@ -6,16 +6,14 @@
       id="dropdownMenuButton"
       data-toggle="dropdown"
       aria-haspopup="true"
-      aria-expanded="false"
-      @click.prevent="getFavorite"
-    >
+      aria-expanded="false">
       <i class="fas fa-heart fa-lg"></i>
-      <span class="badge badge-pill badge-danger customize-badge">{{ favoriteQty }}</span>
+      <span class="badge badge-pill badge-danger customize-badge">{{ favoritesQty }}</span>
     </button>
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
       <div
         class="d-flex favorite-list mb-1"
-        v-for="favoriteItem in favorite"
+        v-for="favoriteItem in favorites"
         :key="favoriteItem.id"
       >
         <button
@@ -32,75 +30,28 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'favorite',
   data () {
-    return {
-      favoriteQty: 0,
-      favoriteLocalStorage:
-        JSON.parse(window.localStorage.getItem('favoriteStoredId')) || [],
-      favorite: [],
-      products: []
-    }
+    return {}
   },
   methods: {
-    getProducts () {
-      const vm = this
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/products/all`
-      this.$http.get(url).then(response => {
-        vm.products = response.data.products
-      })
-    },
-    getFavorite () {
-      const vm = this
-      vm.getProducts()
-      vm.favorite = []
-      vm.fetch()
-      vm.products.forEach(function (item, index) {
-        vm.favoriteLocalStorage.forEach(function (i) {
-          if (item.id === i) {
-            vm.favorite.push(item)
-          }
-        })
-      })
-    },
     deleteFavoriteItem (id) {
-      const vm = this
-      let $id = id
-      let result = vm.favoriteLocalStorage
-        .map(function (productItem) {
-          return productItem
-        })
-        .indexOf($id)
-      vm.favoriteLocalStorage.splice(result, 1)
-      localStorage.setItem(
-        'favoriteStoredId',
-        JSON.stringify(vm.favoriteLocalStorage)
-      )
-      vm.getFavorite()
-      vm.updateQty()
+      this.$store.dispatch('favoritesModules/deleteFavoriteItem', id)
     },
-    fetch () {
-      // 重新取得 LocalStorage
-      const vm = this
-      vm.favoriteLocalStorage.length = 0
-      vm.favoriteLocalStorage = JSON.parse(
-        window.localStorage.getItem('favoriteStoredId')
-      )
-    },
-    updateQty () {
-      // 更新我的最愛數量
-      const vm = this
-      vm.fetch()
-      vm.getFavorite()
-      vm.favoriteQty = vm.favoriteLocalStorage.length
-    }
+    ...mapActions('productsModules', ['getProducts']),
+    ...mapActions('favoritesModules', ['getFavorite', 'deleteFavoriteItem', 'incrementIfOddOnRootSum'])
+  },
+  computed: {
+    ...mapGetters('productsModules', ['products']),
+    ...mapGetters('favoritesModules', ['favorites', 'favoritesQty'])
   },
   created () {
-    const vm = this
-    vm.$bus.$on('favorite:refresh', () => {
-      vm.updateQty()
-    })
+    this.getProducts()
+    this.getFavorite()
+    // this.setFavoriteList()
+    // console.log(this.$store) // for debug store
   }
 }
 </script>

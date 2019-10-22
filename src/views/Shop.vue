@@ -1,19 +1,17 @@
 <template>
   <div>
     <div class="container">
-      <div class="col-12">
-        <Breadcrumb :category="category"></Breadcrumb>
-        <form class="form-inline input-group mb-3 search" @submit.prevent="search">
-          <input type="text" class="form-control" placeholder="search" v-model="searchText" />
-          <div class="input-group-append">
-            <button class="input-group-text bg-light">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
-        </form>
-      </div>
+      <Breadcrumb :category="category"></Breadcrumb>
+      <form class="form-inline input-group mb-3 search" @submit.prevent="search">
+        <input type="text" class="form-control" placeholder="search" v-model="searchText" />
+        <div class="input-group-append">
+          <button class="input-group-text bg-light">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </form>
       <div class="category-tab w-100">
-        <ul class="col-12 nav nav-pills nav-fill">
+        <ul class="row nav nav-pills nav-fill">
           <li class="col-3 py-2 nav-item" v-for="(categoryTab, index) in categories" :key="index">
             <a
               class="category-tab-link"
@@ -29,14 +27,34 @@
           <span v-if="filterProducts.length === 0">未找到任何有關 "{{ filter }}" 的商品</span>
           <span v-else>總共找到 {{ filterProducts.length }} 樣有關 "{{ filter }}" 的商品</span>
         </div>
-        <div class="col-md-4 mb-4" v-for="item in filterProducts" :key="item.id">
+        <div class="col-md-6 col-lg-4 mb-4" v-for="item in filterProducts" :key="item.id">
           <div class="card h-100 border-0 shadow-sm">
             <div
-              style="height: 250px; background-size: cover; background-position: center"
+              style="height: 250px; background-size: cover; background-position: center; border-top-left-radius: 0.25rem; border-top-right-radius: 0.25rem;"
               :style="{backgroundImage: `url(${item.imageUrl})`}"
-            ></div>
+            >
+              <div class="card-layer">
+                <div class="card-button-costomize">
+                  <button
+                    type="button"
+                    class="btn btn-sm mx-2"
+                    @click="getProduct(item.id)"
+                  >查看更多
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm mx-2"
+                    @click.prevent="addToCart(item.id, qty)"
+                    :disabled="status.loadingItem === item.id"
+                  >
+                    <i class="fas fa-spinner fa-spin" v-if="status.loadingItem === item.id"></i>
+                    加到購物車
+                  </button>
+                </div>
+              </div>
+            </div>
             <div class="card-body">
-              <span class="badge badge-secondary float-right ml-2">{{ item.category }}</span>
+              <span class="badge badge-costomize float-right ml-2">{{ item.category }}</span>
               <h5 class="card-title">
                 <a href="#" class="text-dark">{{ item.title }}</a>
               </h5>
@@ -47,24 +65,6 @@
                 <div class="h5" v-if="item.price !== item.origin_price">現在只要 {{ item.price }} 元</div>
               </div>
             </div>
-            <div class="card-footer d-flex">
-              <button
-                type="button"
-                class="btn btn-outline-secondary btn-sm"
-                @click="getProduct(item.id)"
-              >
-                <i class="fas fa-spinner fa-spin" v-if="status.loadingItem === item.id"></i>
-                查看更多
-              </button>
-              <button
-                type="button"
-                class="btn btn-outline-danger btn-sm ml-auto"
-                @click.prevent="addToCart(item.id, qty)"
-              >
-                <i class="fas fa-spinner fa-spin" v-if="status.loadingItem === item.id"></i>
-                加到購物車
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -72,6 +72,7 @@
   </div>
 </template>
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import Breadcrumb from '../components/Breadcrumb'
 import scrollReveal from 'scrollreveal'
 export default {
@@ -80,7 +81,6 @@ export default {
   },
   data () {
     return {
-      products: [],
       breadcrumb: [],
       filter: '',
       categories: [
@@ -92,6 +92,7 @@ export default {
       category: '全部',
       searchText: '',
       product: {},
+      qty: 1,
       status: {
         loadingItem: ''
       },
@@ -99,15 +100,6 @@ export default {
     }
   },
   methods: {
-    getProducts () {
-      const vm = this
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/products/all`
-      vm.$store.dispatch('updateLoading', true)
-      this.$http.get(url).then(response => {
-        vm.products = response.data.products
-        vm.$store.dispatch('updateLoading', false)
-      })
-    },
     getProduct (id) {
       const vm = this
       vm.$router.push(`/shop/${id}`)
@@ -131,18 +123,10 @@ export default {
       vm.filter = vm.searchText
       vm.searchText = ''
     },
-    addToCart (id, n = 1) {
-      const vm = this
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
-      const cart = {
-        product_id: id,
-        qty: n
-      }
-      this.$http.post(url, { data: cart }).then(response => {
-        this.$bus.$emit('message:push', `${response.data.message}`, 'success')
-        this.$bus.$emit('cartQty:refresh')
-      })
-    }
+    addToCart (id, qty = 1) {
+      this.$store.dispatch('cartsModules/addToCart', { id, qty })
+    },
+    ...mapActions('productsModules', ['getProducts'])
   },
   computed: {
     filterProducts () {
@@ -157,12 +141,12 @@ export default {
       }
 
       return vm.products
-    }
+    },
+    ...mapGetters('productsModules', ['products'])
   },
   created () {
     this.getQuery()
     this.getProducts()
-    this.$bus.$emit('favorite:refresh')
   },
   updated () {
     this.scrollReveal.reveal('.card', {
@@ -185,7 +169,7 @@ export default {
     margin: 0;
     padding: 0;
   }
-  li {
+  .nav-item {
     float: left;
     text-align: center;
     cursor: default;
@@ -210,7 +194,6 @@ export default {
         left: 0;
         background-color: rgb(143, 130, 96);
         z-index: -1;
-        -webkit-transform: translateX(-102%);
         transform: translateX(-102%);
         transition: all 0.5s;
       }
@@ -220,7 +203,6 @@ export default {
       }
 
       &:hover:before {
-        -webkit-transform: translateX(0);
         transform: translateX(0);
       }
     }
@@ -230,7 +212,6 @@ export default {
       background-color: rgb(143, 130, 96);
       &:hover:before {
         background-color: rgb(143, 130, 96);
-        -webkit-transform: translateX(-100%);
         transform: translateX(-100%);
       }
     }
@@ -239,4 +220,43 @@ export default {
 .search {
   margin: 0.6rem 0;
 }
+.badge-costomize {
+  border: 1px solid #8f8260;
+  color: #5a5a5a;
+  cursor: default;
+}
+
+.card {
+  .card-layer {
+    display: none;
+    position: relative;
+    width: 100%;
+    height: 250px;
+    background-color: rgba(0, 0, 0, .5);
+    padding: 0;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    .card-button-costomize {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 90%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      .btn {
+        color: #ffffff;
+        text-align: center;
+        border: 1px solid #8f8260;
+        &:hover {
+          border: 1px solid #ecd59d;
+        }
+      }
+    }
+  }
+
+  &:hover .card-layer {
+    display: block;
+  }
+}
+
 </style>

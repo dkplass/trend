@@ -168,10 +168,10 @@ export default {
     getCoupons () {
       const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/coupons`
       const vm = this
-      vm.$store.dispatch('updateLoading', true)
+      this.$store.dispatch('updateLoading', true)
       this.$http.get(url).then(response => {
         if (response.data.success) {
-          vm.$store.dispatch('updateLoading', false)
+          this.$store.dispatch('updateLoading', false)
           vm.coupons = response.data.coupons
           console.log(response)
         }

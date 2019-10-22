@@ -103,7 +103,7 @@
                   <div class="form-group col-md-6">
                     <label for="price">單位</label>
                     <input
-                      type="unit"
+                      type="text"
                       class="form-control"
                       id="unit"
                       v-model="tempProduct.unit"
@@ -235,11 +235,10 @@ export default {
     getProducts (page = 1) {
       const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/products?page=${page}`
       const vm = this
-      vm.$store.state.isLoading = true
+      this.$store.dispatch('updateLoading', true)
       this.$http.get(api).then(response => {
-        console.log(response.data)
         if (response.data.success) {
-          vm.$store.state.isLoading = false
+          this.$store.dispatch('updateLoading', false)
           vm.products = response.data.products
           vm.pagination = response.data.pagination
         }
@@ -317,8 +316,9 @@ export default {
             vm.status.fileUploading = false
             vm.$set(vm.tempProduct, 'imageUrl', response.data.imageUrl)
             // 強制寫入(雙向綁定)，原本沒有getter&setter
+            this.$store.dispatch('messagesModules/updateMessage', { message: '上傳成功', status: 'success' })
           } else {
-            this.$bus.$emit('message:push', response.data.message, 'danger')
+            this.$store.dispatch('messagesModules/updateMessage', { message: `${response.data.message}`, status: 'danger' })
             vm.status.fileUploading = false
             // 清除上傳失敗的欄位
             upload.type = 'text'

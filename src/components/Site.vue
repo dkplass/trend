@@ -38,7 +38,7 @@
           <router-link to="/pay" class="btn cart-btn">
             <i class="fas fa-shopping-cart fa-lg"></i>
             <span class="badge badge-pill badge-danger customize-badge">
-              <CartQty></CartQty>
+              {{ cartstotal }}
             </span>
           </router-link>
         </div>
@@ -52,7 +52,7 @@
     <main class="main">
       <router-view></router-view>
     </main>
-    <footer class="bg-light mt-5">
+    <footer class="footer bg-light mt-5">
       <div class="container">
         <ul class="row d-md-flex footer-content">
           <li class="footer-item col-md-4 my-4">
@@ -74,22 +74,22 @@
           <li class="footer-item col-md-4 my-4">
             <h5 class="footer-title">跟隨我們</h5>
             <ul class="social-media">
-              <li>
+              <li class="social-media-item">
                 <a href="#" class="text-primary">
                   <i class="fab fa-facebook footer-icon"></i>
                 </a>
               </li>
-              <li>
+              <li class="social-media-item">
                 <a href="#" class="text-primary">
                   <i class="fab fa-twitter footer-icon"></i>
                 </a>
               </li>
-              <li>
+              <li class="social-media-item">
                 <a href="#" class="text-primary">
                   <i class="fab fa-instagram footer-icon"></i>
                 </a>
               </li>
-              <li>
+              <li class="social-media-item">
                 <a href="#" class="text-primary">
                   <i class="fab fa-line footer-icon"></i>
                 </a>
@@ -105,15 +105,22 @@
 </template>
 
 <script>
-import $ from 'jquery'
+import { mapGetters, mapActions } from 'vuex'
 import Alert from './AlertMessage'
-import CartQty from './Countcart'
 import Favorite from './Favorite'
 export default {
   components: {
     Alert,
-    CartQty,
     Favorite
+  },
+  methods: {
+    ...mapActions('cartsModules', ['getCart'])
+  },
+  computed: {
+    ...mapGetters('cartsModules', ['cart', 'cartstotal'])
+  },
+  created () {
+    this.getCart()
   }
 }
 </script>

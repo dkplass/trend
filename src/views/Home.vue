@@ -39,7 +39,7 @@
     </div>
     <div class="container">
       <div class="category my-4">
-        <ul class="list">
+        <ul class="list row">
           <li class="item text-center col-sm-3 col-3"
             v-for="(category, key) in categories" :key="key"
             @click.prevent="goCategory(category.title)">
@@ -47,8 +47,8 @@
           </li>
         </ul>
       </div>
-			<section class="index-content mt-4 text-center">
-				<div class="row">
+      <section class="index-content mt-4 text-center">
+        <div class="row">
           <div class="col-md-6">
             <div class="block-item left-top">
               <div class="layer"></div>
@@ -59,7 +59,7 @@
               <ValidationObserver ref="observer" v-slot="{ valid }">
                 <ValidationProvider rules="required|email" name="email" v-slot="{ errors }" slim>
                   <div class="input-group px-4">
-                    <input type="text"
+                    <input type="email"
                       class="form-control"
                       placeholder="電子郵件"
                       id="email"
@@ -84,7 +84,7 @@
             </div>
           </div>
         </div>
-			</section>
+      </section>
     </div>
   </div>
 </template>
@@ -108,9 +108,9 @@ export default {
     subscribe () {
       this.$refs.observer.validate().then((isValid) => {
         if (isValid) {
-          this.$bus.$emit('message:push', '訂閱成功', 'success')
+          this.$store.dispatch('messagesModules/updateMessage', { message: '訂閱成功', status: 'success' })
         } else {
-          this.$bus.$emit('message:push', '電子郵件格式不符合', 'danger')
+          this.$store.dispatch('messagesModules/updateMessage', { message: '訂閱失敗', status: 'danger' })
         }
       })
     },
@@ -118,10 +118,6 @@ export default {
       const vm = this
       vm.$router.push({ path: '/shop', query: { category: categoryTitle } })
     }
-  },
-  created () {
-    this.$bus.$emit('cartQty:refresh')
-    this.$bus.$emit('favorite:refresh')
   }
 }
 </script>

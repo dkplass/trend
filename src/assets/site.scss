@@ -94,7 +94,7 @@ button:focus, .btn:focus, .btn:active {
 		padding: 0;
 	}	
 
-	li + li {
+	.item + .item {
 		border-left: 1px solid #8f8260;
 	}
 
@@ -143,24 +143,12 @@ button:focus, .btn:focus, .btn:active {
             right: 0px;
             bottom: 0px;
             left: 0px;
-
-            transition: all 0.6s ease-in-out;
-            -webkit-transition: all 0.6s ease-in-out;
-            -moz-transition: all 0.6s ease-in-out;
-            -ms-transition: all 0.6s ease-in-out;
-            -o-transition: all 0.6s ease-in-out;
+            transition: all 0.6s ease-in-out;            
         }
 
         &:hover .layer {
             box-shadow: inset 0px 0px 50px rgba(255, 255, 255, 0.9);
-            -moz-box-shadow: inset 0px 0px 50px rgba(255, 255, 255, 0.9);
-            -webkit-box-shadow: inset 0px 0px 50px rgba(255, 255, 255, 0.9);
-
-            transition:all 0.6s ease-in-out;
-            -webkit-transition:all 0.6s ease-in-out;
-            -moz-transition:all 0.6s ease-in-out;
-            -ms-transition:all 0.6s ease-in-out;
-            -o-transition:all 0.6s ease-in-out;
+            transition:all 0.6s ease-in-out;            
         }        
     }
 
@@ -194,14 +182,14 @@ button:focus, .btn:focus, .btn:active {
     padding: 1rem;
 }
 
-footer {
+.footer {
     ul, li {
         list-style-type: none;
         margin: 0;
         padding: 0;
     }
 
-    .social-media li {        
+    .social-media-item {        
         float: left;        
         margin: 0 .4rem;
 
@@ -214,7 +202,6 @@ footer {
 
 .cart, .favorite, .setting {
     float: left;
-    // margin-left: .25rem
 }
 
 @media (max-width: 992px) {    

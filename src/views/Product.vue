@@ -1,14 +1,12 @@
 <template>
   <div>
     <div class="container">
-      <div class="col-12">
-        <Breadcrumb :category="product.title"></Breadcrumb>
-      </div>
+      <Breadcrumb :category="product.title"></Breadcrumb>
       <div class="row">
         <div class="col-lg-6 mx-auto">
           <div class="image text-center">
             <div class="image-layer">
-              <a href="#" class="float-right" @click.prevent="addFavorite()">
+              <a href="#" class="float-right" @click.prevent="is_favoriteItem(product)">
                 <i class="favorite-icon" :class="favoriteClass"></i>
               </a>
             </div>
@@ -38,7 +36,8 @@
               <option :value="num" v-for="num in 10" :key="num">選購 {{ num }} {{ product.unit }}</option>
             </select>
             <button class="btn btn-customize" @click.prevent="addToCart(product.id, qty)">
-              <i class="fas fa-plus"></i>
+              <i class="fas fa-spinner fa-spin" v-if="status.loadingItem === product.id"></i>
+              <i class="fas fa-plus" v-else></i>
               加入購物車
             </button>
           </div>
@@ -95,6 +94,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import Breadcrumb from '../components/Breadcrumb'
 export default {
   components: {
@@ -105,9 +105,10 @@ export default {
       product: {},
       productId: '',
       qty: 1,
-      favoriteLocalStorage:
-        JSON.parse(localStorage.getItem('favoriteStoredId')) || [],
-      heartClass: 'far fa-heart'
+      heartClass: 'far fa-heart',
+      status: {
+        loadingItem: ''
+      }
     }
   },
   methods: {
@@ -120,71 +121,38 @@ export default {
         vm.$store.dispatch('updateLoading', false)
       })
     },
-    addToCart (id, n = 1) {
-      const vm = this
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
-      const cart = {
-        product_id: id,
-        qty: n
-      }
-      this.$http.post(url, { data: cart }).then(response => {
-        this.$bus.$emit('message:push', `${response.data.message}`, 'success')
-        this.$bus.$emit('cartQty:refresh')
-      })
+    addToCart (id, qty = 1) {
+      this.$store.dispatch('cartsModules/addToCart', { id, qty })
     },
-    addFavorite () {
-      const vm = this
-      let $id = vm.product.id
-      let result = vm.favoriteLocalStorage
-        .map(function (productItem) {
-          return productItem
-        })
-        .indexOf($id)
-      if (result === -1) {
-        // 變更最愛按鈕樣式
-        vm.heartClass = 'fas fa-heart'
-        // 將此商品ID存進localstorage
-        vm.favoriteLocalStorage.push(vm.product.id)
-        localStorage.setItem(
-          'favoriteStoredId',
-          JSON.stringify(vm.favoriteLocalStorage)
-        )
-      } else {
-        // 變更最愛按鈕樣式
-        vm.heartClass = 'far fa-heart'
-        // 將此商品ID從localstorage刪除
-        vm.favoriteLocalStorage.splice(result, 1)
-        localStorage.setItem(
-          'favoriteStoredId',
-          JSON.stringify(vm.favoriteLocalStorage)
-        )
-      }
-
-      this.$bus.$emit('favorite:refresh')
-    }
+    is_favoriteItem (product) {
+      this.$store.dispatch('favoritesModules/isFavoriteItem', product)
+    },
+    ...mapActions('favoritesModules', ['getFavorite', 'changeFavoriteClass', 'isFavoriteItem'])
   },
   computed: {
     favoriteClass () {
-      const vm = this
+      // const vm = this
 
-      let result = vm.favoriteLocalStorage
-        .map(favoriteItem => {
-          return favoriteItem
-        })
-        .indexOf(vm.productId)
+      // let result = vm.favoriteLocalStorage
+      //   .map(favoriteItem => {
+      //     return favoriteItem
+      //   })
+      //   .indexOf(vm.productId)
 
-      if (result > -1) {
-        return (vm.heartClass = 'fas fa-heart')
-      } else {
-        return (vm.heartClass = 'far fa-heart')
-      }
-      return vm.heartClass
-    }
+      // if (result > -1) {
+      //   return (vm.heartClass = 'fas fa-heart')
+      // } else {
+      //   return (vm.heartClass = 'far fa-heart')
+      // }
+      return this.heartClass
+    },
+    ...mapGetters('favoritesModules', ['favorites', 'favoritesQty', 'favoriteClass'])
   },
   created () {
     this.productId = this.$route.params.productId
     this.getProduct()
-    this.$bus.$emit('favorite:refresh')
+    this.getFavorite()
+    this.$store.dispatch('favoritesModules/changeFavoriteClass', this.productId)
   }
 }
 </script>

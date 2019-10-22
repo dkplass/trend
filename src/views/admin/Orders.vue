@@ -54,11 +54,11 @@ export default {
     getOrders (currentPage = 1) {
       const vm = this
       const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/orders?page=${currentPage}`
-      vm.$store.dispatch('updateLoading', true)
+      this.$store.dispatch('updateLoading', true)
       this.$http.get(url, vm.tempProduct).then(response => {
         vm.orders = response.data.orders
         vm.pagination = response.data.pagination
-        vm.$store.dispatch('updateLoading', false)
+        this.$store.dispatch('updateLoading', false)
         console.log(response)
       })
     }
