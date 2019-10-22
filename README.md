@@ -1,4 +1,4 @@
-# vueproject
+# Trend
 
 > 電子商務網站實作練習專案，
 > 本站郵件訂閱和結帳是模擬並無實際效果，
@@ -32,6 +32,7 @@
 * API (axios)
 * Bootstrap4
 * scss
+* Vuex
 
 # 套件
 * vue-axios
