@@ -11,11 +11,12 @@
       <span class="badge badge-pill badge-danger customize-badge">{{ favoritesQty }}</span>
     </button>
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+      <div class="text-center" v-if="favoritesQty === 0">目前沒有最愛</div>
       <div
         class="d-flex favorite-list mb-1"
         v-for="favoriteItem in favorites"
         :key="favoriteItem.id"
-      >
+        v-else>
         <button
           type="button"
           class="btn text-danger btn-sm mx-1"
