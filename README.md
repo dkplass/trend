@@ -6,7 +6,7 @@
 
 # Demo
 
-> [Trend](https://dkplass.github.io/vueproject/dist/#/home)
+> [Trend](https://dkplass.github.io/trend/dist/#/home)
 
 # 介紹
 
