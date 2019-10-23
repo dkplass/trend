@@ -1,6 +1,9 @@
 <template>
   <div>
-    <table class="table table-md custom-table-width justify-content-center">
+    <div v-if="cartdata.carts.length === 0" class="text-center py-5">
+      <span class="">購物車內尚無商品，選購商品後再到下一個步驟，謝謝</span>
+    </div>
+    <table class="table table-md custom-table-width justify-content-center" v-else>
       <thead>
         <tr>
           <th scope="col"></th>
@@ -39,7 +42,7 @@
         </tr>
       </tfoot>
     </table>
-    <div class="input-group mb-3 input-group-sm custom-coupon-area">
+    <div class="input-group mb-3 input-group-sm custom-coupon-area" v-if="cartdata.carts.length">
       <input type="text" class="form-control" v-model="coupon_code" placeholder="請輸入優惠碼" />
       <div class="input-group-append">
         <button class="btn btn-outline-secondary" type="button" @click="addCouponCode">套用優惠碼</button>
