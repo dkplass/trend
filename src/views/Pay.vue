@@ -300,7 +300,6 @@ export default {
   },
   created () {
     this.getCart()
-    console.log(this.$el.querySelector('#collapseContent'))
   }
 }
 </script>
