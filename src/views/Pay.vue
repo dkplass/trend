@@ -17,25 +17,51 @@
             繼續購買
           </router-link>
           <button class="btn btn-danger d-inline-block float-right"
-            @click.prevent="step = 2"
-            :disabled="cart.carts.length === 0">
-            <span class="px-1" v-if="cart.carts.length === 0">請選購商品</span>
-            <span class="px-1" v-else>下一步，填寫訂購資料</span>
+            @click.prevent="cartMessage"
+            :disabled="cart.carts.length === 0" v-if="cart.carts.length === 0">
+            <span class="px-1">請選購商品</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+          <button class="btn btn-danger d-inline-block float-right"
+            @click.prevent="step = 2" v-else>
+            <span class="px-1">下一步，填寫訂購資料</span>
             <i class="fas fa-arrow-right"></i>
           </button>
         </div>
       </template>
       <div v-if="step === 2" class="my-5 row justify-content-center">
+        <div class="col-12">
+          <table class="table table-md table-costomize">
+            <thead class="thead-costomize">
+              <tr>
+                <th scope="col">商品名稱</th>
+                <th scope="col">商品總價</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in cart.carts" :key="item.id">
+                <td>{{ item.product.title }}</td>
+                <td>{{ item.final_total | currency }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td class="text-right text-costomize">訂單總額：</td>
+                <td class="text-right text-costomize">{{ cart.final_total | currency }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
         <ValidationObserver
           ref="observer"
           v-slot="{ invalid }"
           tag="form"
-          class="col-md-6 mx-auto"
+          class="col-12 mx-auto form-costomize"
           @submit.prevent="createOrder"
         >
           <ValidationProvider rules="required|email" name="email" v-slot="{ errors }" slim>
             <div class="form-group">
-              <label for="useremail">Email</label>
+              <label for="useremail">收件人電子郵件</label>
               <input
                 type="email"
                 class="form-control"
@@ -94,7 +120,7 @@
           </ValidationProvider>
 
           <div class="form-group">
-            <label for="useraddress">留言</label>
+            <label for="useraddress">其他要求</label>
             <textarea name id class="form-control" v-model="form.message" cols="30" rows="10"></textarea>
           </div>
           <div class="mb-4 mt-5 step-btn">
@@ -110,28 +136,29 @@
         </ValidationObserver>
       </div>
       <div v-if="step === 3" class="my-5 row justify-content-center">
-        <form class="col-md-6" @submit.prevent="payOrder">
-          <table class="table">
-            <thead>
-              <th>品名</th>
-              <th>數量</th>
-              <th>單價</th>
+        <div class="col-12">
+          <table class="table table-md table-costomize">
+            <thead class="thead-costomize">
+              <tr>
+                <th scope="col">商品名稱</th>
+                <th scope="col">商品總價</th>
+              </tr>
             </thead>
             <tbody>
-              <tr v-for="item in order.products" :key="item.id">
-                <td class="align-middle">{{ item.product.title }}</td>
-                <td class="align-middle">{{ item.qty }}/{{ item.product.unit }}</td>
-                <td class="align-middle text-right">{{ item.final_total }}</td>
+              <tr v-for="item in cart.carts" :key="item.id">
+                <td>{{ item.product.title }}</td>
+                <td>{{ item.final_total | currency }}</td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="2" class="text-right">總計</td>
-                <td class="text-right">{{ order.total }}</td>
+                <td class="text-right text-costomize">訂單總額：</td>
+                <td class="text-right text-costomize">{{ cart.final_total | currency }}</td>
               </tr>
             </tfoot>
           </table>
-
+        </div>
+        <form class="col-12 mt-5" @submit.prevent="payOrder">
           <table class="table">
             <tbody>
               <tr>
@@ -206,13 +233,9 @@ export default {
       vm.$store.dispatch('updateLoading', true)
       this.$http.post(url, { data: coupon }).then(response => {
         if (response.data.success) {
-          this.$bus.$emit(
-            'message:push',
-            `${response.data.message}`,
-            'success'
-          )
+          this.$store.dispatch('messagesModules/updateMessage', { message: `${response.data.message}`, status: 'success' })
         } else {
-          this.$bus.$emit('message:push', `${response.data.message}`, 'danger')
+          this.$store.dispatch('messagesModules/updateMessage', { message: `${response.data.message}`, status: 'danger' })
         }
 
         vm.getCart()
@@ -227,7 +250,7 @@ export default {
       this.$refs.observer.validate().then(isValid => {
         if (isValid) {
           this.$http.post(url, { data: order }).then(response => {
-            this.$bus.$emit('message:push', '訂單已建立', 'success')
+            this.$store.dispatch('messagesModules/updateMessage', { message: '訂單已建立', status: 'success' })
             vm.$store.dispatch('updateLoading', false)
 
             if (response.data.success) {
@@ -237,7 +260,7 @@ export default {
             }
           })
         } else {
-          this.$bus.$emit('message:push', '欄位不完整', 'success')
+          this.$store.dispatch('messagesModules/updateMessage', { message: '欄位不完整', status: 'success' })
           vm.$store.dispatch('updateLoading', false)
         }
       })
@@ -258,20 +281,17 @@ export default {
       vm.$store.dispatch('updateLoading', true)
       this.$http.post(url).then(response => {
         if (response.data.success) {
-          this.$bus.$emit(
-            'message:push',
-            `${response.data.message}`,
-            'success'
-          )
-          this.$bus.$emit('cartQty:refresh')
+          this.$store.dispatch('messagesModules/updateMessage', { message: `${response.data.message}`, status: 'success' })
           this.getOrder()
         } else {
-          this.$bus.$emit('message:push', `${response.data.message}`, 'danger')
-          this.$bus.$emit('cartQty:refresh')
+          this.$store.dispatch('messagesModules/updateMessage', { message: `${response.data.message}`, status: 'danger' })
           this.getOrder()
         }
         vm.$store.dispatch('updateLoading', false)
       })
+    },
+    cartMessage () {
+      this.$store.dispatch('messagesModules/updateMessage', { message: '請選購商品在進到下一步驟', status: 'success' })
     },
     ...mapActions('cartsModules', ['getCart'])
   },
@@ -280,6 +300,7 @@ export default {
   },
   created () {
     this.getCart()
+    console.log(this.$el.querySelector('#collapseContent'))
   }
 }
 </script>
@@ -334,6 +355,21 @@ export default {
 .step-btn {
   overflow: hidden;
 }
+
+.table-costomize {
+  .thead-costomize {
+    background-color: #8f8260;
+    color: #ffffff;
+  }
+  .text-costomize {
+    color: #8f8260;
+  }
+}
+
+.form-costomize {
+  margin-top: 4rem;
+}
+
 @media (max-width: 576px) {
   .step {
     .step-node {

@@ -24,7 +24,8 @@
         >
           <i class="fas fa-trash-alt"></i>
         </button>
-        <a class="dropdown-item" href="#">{{ favoriteItem.title }}</a>
+        <router-link class="dropdown-item" :to="`/shop/${favoriteItem.id}`">{{ favoriteItem.title }}</router-link>
+        <!-- <a class="dropdown-item" href="#" @click="$router.push(`/shop/${favoriteItem.id}`)">{{ favoriteItem.title }}</a> -->
       </div>
     </div>
   </div>

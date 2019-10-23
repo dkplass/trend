@@ -130,22 +130,6 @@ export default {
     ...mapActions('favoritesModules', ['getFavorite', 'changeFavoriteClass', 'isFavoriteItem'])
   },
   computed: {
-    favoriteClass () {
-      // const vm = this
-
-      // let result = vm.favoriteLocalStorage
-      //   .map(favoriteItem => {
-      //     return favoriteItem
-      //   })
-      //   .indexOf(vm.productId)
-
-      // if (result > -1) {
-      //   return (vm.heartClass = 'fas fa-heart')
-      // } else {
-      //   return (vm.heartClass = 'far fa-heart')
-      // }
-      return this.heartClass
-    },
     ...mapGetters('favoritesModules', ['favorites', 'favoritesQty', 'favoriteClass'])
   },
   created () {
@@ -153,6 +137,11 @@ export default {
     this.getProduct()
     this.getFavorite()
     this.$store.dispatch('favoritesModules/changeFavoriteClass', this.productId)
+  },
+  beforeRouteUpdate (to, from, next) {
+    this.productId = to.params.productId
+    this.getProduct()
+    next()
   }
 }
 </script>

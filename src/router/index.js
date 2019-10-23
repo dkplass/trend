@@ -50,7 +50,11 @@ const routes = [
           {
             name: '線上商店',
             link: '/shop'
-          }]
+          }],
+          beforeEach: (to, from, next) => {
+            // store.dispatch('fetchRequest', to.params.id);
+            next()
+          }
         }
       },
       {

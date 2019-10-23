@@ -42,11 +42,6 @@
             </span>
           </router-link>
         </div>
-        <div class="btn-group mx-2 setting">
-          <router-link to="/login" class="btn cart-btn">
-            <i class="fas fa-cog fa-lg"></i>
-          </router-link>
-        </div>
       </div>
     </nav>
     <main class="main">

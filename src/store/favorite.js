@@ -11,8 +11,8 @@ export default {
             let LocalStorage = JSON.parse(window.localStorage.getItem('favoriteStored')) || []
             context.commit('FAVORITE', LocalStorage)
             context.commit('FAVORITE_TOTAL', LocalStorage.length)
-            // context.dispatch('productsModules/getProducts', null, { root: true })
-            // console.log(context.rootGetters['productsModules/products'])
+            context.dispatch('productsModules/getProducts', null, { root: true })
+            console.log(context.rootGetters['productsModules/products'])
         },
         changeFavoriteClass (context, productId) {
             context.dispatch('getFavorite')
