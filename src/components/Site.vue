@@ -109,12 +109,15 @@ export default {
     Favorite
   },
   methods: {
+    // ...mapActions('productsModules', ['getProducts']),
     ...mapActions('cartsModules', ['getCart'])
   },
   computed: {
+    // ...mapGetters('productsModules', ['products']),
     ...mapGetters('cartsModules', ['cart', 'cartstotal'])
   },
   created () {
+    // this.getProducts()
     this.getCart()
   }
 }

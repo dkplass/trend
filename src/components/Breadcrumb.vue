@@ -30,7 +30,9 @@ export default {
     },
     routeTo (routeGo) {
       const vm = this
-      if (vm.breadcrumbList[routeGo].link) {
+      if (vm.breadcrumbList[routeGo].link === this.$route.path) {
+        this.$router.go()
+      } else {
         this.$router.push(vm.breadcrumbList[routeGo].link)
       }
     }
@@ -38,9 +40,6 @@ export default {
   watch: {
     $route (to, from) {
       // 監聽$route變化
-      // const toDepth = to.path.split('/').length
-      // const fromDepth = from.path.split('/').length
-      // this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
       this.updateBreadcrumbList()
     }
   },

@@ -1,7 +1,7 @@
 <template>
   <div>
     <button
-      class="btn dropdown-toggle"
+      class="btn dropdown-toggle shadow-none"
       type="button"
       id="dropdownMenuButton"
       data-toggle="dropdown"
@@ -24,8 +24,7 @@
         >
           <i class="fas fa-trash-alt"></i>
         </button>
-        <router-link class="dropdown-item" :to="`/shop/${favoriteItem.id}`">{{ favoriteItem.title }}</router-link>
-        <!-- <a class="dropdown-item" href="#" @click="$router.push(`/shop/${favoriteItem.id}`)">{{ favoriteItem.title }}</a> -->
+        <router-link class="dropdown-item dropdown-item-costomize" :to="`/shop/${favoriteItem.id}`">{{ favoriteItem.title }}</router-link>
       </div>
     </div>
   </div>
@@ -36,24 +35,42 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'favorite',
   data () {
-    return {}
+    return {
+      favArr: [],
+      prodArr: [],
+      favProdArr: []
+    }
   },
   methods: {
     deleteFavoriteItem (id) {
       this.$store.dispatch('favoritesModules/deleteFavoriteItem', id)
     },
-    ...mapActions('productsModules', ['getProducts']),
-    ...mapActions('favoritesModules', ['getFavorite', 'deleteFavoriteItem', 'incrementIfOddOnRootSum'])
+    ...mapActions('favoritesModules', ['getFavorite', 'deleteFavoriteItem'])
   },
   computed: {
-    ...mapGetters('productsModules', ['products']),
-    ...mapGetters('favoritesModules', ['favorites', 'favoritesQty'])
+    favorites () {
+      return this.$store.getters['favoritesModules/favorites']
+    },
+    ...mapGetters('favoritesModules', ['favoritesQty'])
   },
   created () {
-    this.getProducts()
-    this.getFavorite()
-    // this.setFavoriteList()
-    // console.log(this.$store) // for debug store
+    const vm = this
+    this.$store.dispatch('productsModules/getProducts').then(() => {
+      this.getFavorite()
+      // console.log(this.$store)
+      vm.favArr = vm.$store.getters['favoritesModules/favorites']
+      vm.prodArr = vm.$store.getters['productsModules/products']
+      // console.log(vm.favArr)
+      // console.log(vm.prodArr)
+      vm.prodArr.forEach(function (item) {
+        vm.favArr.forEach(function (i) {
+          if (item.id === i.id) {
+            vm.favProdArr.push(item)
+          }
+        })
+      })
+      // console.log(vm.favProdArr)
+    })
   }
 }
 </script>
