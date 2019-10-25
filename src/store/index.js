@@ -6,6 +6,8 @@ import cartsModules from './carts'
 import messagesModules from './message'
 import favoritesModules from './favorite'
 
+// import createLogger from 'vuex/dist/logger'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -30,4 +32,5 @@ export default new Vuex.Store({
     messagesModules,
     favoritesModules
   }
+  // plugins: [createLogger()]
 })
