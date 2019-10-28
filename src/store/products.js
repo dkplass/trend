@@ -13,8 +13,8 @@ export default {
         axios.get(url).then((response) => {
           if (response.data.success) {
             context.commit('PRODUCTS', response.data.products)
-              context.commit('LOADING', false, { root: true })
-              resolve()
+            context.commit('LOADING', false, { root: true })
+            resolve()
           }
         })
       })
