@@ -283,6 +283,7 @@ export default {
         if (response.data.success) {
           this.$store.dispatch('messagesModules/updateMessage', { message: `${response.data.message}`, status: 'success' })
           this.getOrder()
+          this.getCart()
         } else {
           this.$store.dispatch('messagesModules/updateMessage', { message: `${response.data.message}`, status: 'danger' })
           this.getOrder()
